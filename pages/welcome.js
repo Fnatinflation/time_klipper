@@ -45,7 +45,7 @@ class Welcome extends React.Component {
         }
     }
     fetchJobs = () => {
-        db.collection(auth.currentUser.uid).where("archived", '==', false).get().then(querySnapshot => {
+        db.collection("Users").doc(auth.currentUser.uid).collection("Jobs").where("archived", '==', false).get().then(querySnapshot => {
             const doc = querySnapshot.docs.map(doc => doc.data());
             this.setState({
                 jobs: doc.map((doc) => ({

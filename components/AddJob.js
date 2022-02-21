@@ -17,7 +17,7 @@ class AddJob extends React.Component {
     onSubmit = (event) => {
         event.preventDefault()
         let job = { title: this.state.title, desc: this.state.desc, price: this.state.price, units: this.state.units, active: true, initUnits: this.state.units, archived: false, unitDesc: [] }
-        db.collection(auth.currentUser.uid).doc(job.title).set(job).then(() => {
+        db.collection("Users").doc(auth.currentUser.uid).collection("Jobs").doc(job.title).set(job).then(() => {
             console.log('Write succeeded!');
             window.location.reload()
         });

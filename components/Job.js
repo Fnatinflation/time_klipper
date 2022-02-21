@@ -67,7 +67,7 @@ class Job extends React.Component {
         }))
 
 
-        db.collection(auth.currentUser.uid).doc(this.props.title).update({
+        db.collection("Users").doc(auth.currentUser.uid).collection("Jobs").doc(this.props.title).update({
             units: this.state.units - this.state.unitsToUse,
             active: activeTemp,
             unitDesc: firebase.firestore.FieldValue.arrayUnion(unit)
@@ -78,7 +78,7 @@ class Job extends React.Component {
     }
 
     archive = () => {
-        db.collection(auth.currentUser.uid).doc(this.props.title).update({
+        db.collection("Users").doc(auth.currentUser.uid).collection("Jobs").doc(this.props.title).update({
             archived: true
         }).then(() => window.location.reload())
 
