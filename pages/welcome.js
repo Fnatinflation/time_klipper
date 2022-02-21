@@ -37,13 +37,17 @@ class Welcome extends React.Component {
     componentDidMount() {
         if (auth.currentUser) {
             this.fetchJobs()
+            console.log("jobs fetched")
         }
     }
-    componentDidUpdate() {
-        if (auth.currentUser) {
-            this.fetchJobs()
-        }
-    }
+    // componentDidUpdate(prevProps, prevState) {
+    //     const isDifferentPage = this.state.jobs !== prevState.jobs
+
+    //     if (auth.currentUser && isDifferentPage ) {
+    //         this.fetchJobs()
+    //         console.log("jobs fetched from update")
+    //     }
+    // }
     fetchJobs = () => {
         db.collection("Users").doc(auth.currentUser.uid).collection("Jobs").where("archived", '==', false).get().then(querySnapshot => {
             const doc = querySnapshot.docs.map(doc => doc.data());

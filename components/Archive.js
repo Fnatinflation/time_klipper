@@ -9,7 +9,7 @@ class Archive extends React.Component {
         this.state = { jobs: [] }
     }
     componentDidMount() {
-        db.collection(auth.currentUser.uid).where("archived", '==', true).get().then(querySnapshot => {
+        db.collection("Users").doc(auth.currentUser.uid).collection("Jobs").where("archived", '==', true).get().then(querySnapshot => {
             const doc = querySnapshot.docs.map(doc => doc.data());
             this.setState({
                 jobs: doc.map((doc) => ({
