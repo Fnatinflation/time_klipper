@@ -144,7 +144,7 @@ class Job extends React.Component {
                                         }
                                     }}>+</Button>
                                     <Button className={styles.changeUnitsButton} onClick={() => {
-                                        if (this.state.unitsToUse > 0) {
+                                        if (this.state.unitsToUse > 0.00) {
                                             this.setState((prevState, props) => ({
                                                 unitsToUse: prevState.unitsToUse - 0.25
                                             }))
@@ -166,7 +166,13 @@ class Job extends React.Component {
                 <Row>
                     {this.state.unitDescs.map((ud, index) => {
                         let date = ud.timestamp.toDate()
-                        return <div key={index}>{ud.unitsUsed} klip brugt d. {date.getDate()}/{date.getMonth() + 1}-{date.getFullYear()} kl. {date.getHours()}:{date.getMinutes()} - {ud.unitDesc}</div>
+                        let minutes = date.getMinutes()
+                        console.log(minutes.toString.length)
+
+                        if(minutes.toString().length === 1){
+                            minutes = "0" + minutes
+                        }
+                        return <div key={index}>{ud.unitsUsed} klip brugt d. {date.getDate()}/{date.getMonth() + 1}-{date.getFullYear()} kl. {date.getHours()}:{minutes} - {ud.unitDesc}</div>
                     })}
                 </Row>
 

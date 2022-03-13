@@ -24,7 +24,7 @@ class Archive extends React.Component {
         })
     }
     deArchive = (job) => {
-        db.collection(auth.currentUser.uid).doc(job.title).update({
+        db.collection("Users").doc(auth.currentUser.uid).collection("Jobs").doc(job.title).update({
             archived: false
         }).then(() => window.location.reload())
 
