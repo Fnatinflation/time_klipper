@@ -10,7 +10,7 @@ import { PDFDownloadLink, Document, Page, Text, StyleSheet } from '@react-pdf/re
 
 const pdfStyle = StyleSheet.create({
     page: { margin: '80px' },
-    headline: { fontSize: '30px', fontWeight: "bold", marginBottom: "10px", textAlign: "center" },
+    headline: { fontSize: '30px', fontWeight: "bold", marginBottom: "10px"},
     paragraph: { fontSize: '14px' }
 });
 
@@ -132,12 +132,12 @@ class Job extends React.Component {
                     </Col>
                     <Row style={{ display: "flex", justifyContent: "center" }}>
                         <Col>
-                            <Button variant="danger" style={{ width: "100px", marginRight: "20px" }} onClick={this.archive}>Arkiver</Button>
+                            <Button variant="danger" style={{ width: "100px", marginRight: "20px" ,float:"right"}} onClick={this.archive}>Arkiver</Button>
 
                         </Col>
                         <Col>
                             <PDFDownloadLink document={<MyDoc />} fileName={this.props.title + ".pdf"}>
-                                {({ blob, url, loading, error }) => (loading ? <Button>Indlæser ...</Button> : <Button>Download</Button>)}
+                                {({ blob, url, loading, error }) => (loading ? <Button >Indlæser ...</Button> : <Button >Download</Button>)}
                             </PDFDownloadLink>
                         </Col>
 
