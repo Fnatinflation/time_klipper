@@ -6,12 +6,18 @@ import db from '../firebase';
 import { auth } from "../firebase"
 import { firebase } from '../firebase';
 import styles from '../styles/Global.module.css'
+import { PDFDownloadLink, Document, Page, Text, StyleSheet } from '@react-pdf/renderer'
 
+const pdfStyle = StyleSheet.create({
+    page: { margin: '80px' },
+    headline: { fontSize: '30px', fontWeight: "bold", marginBottom: "10px", textAlign: "center" },
+    paragraph: { fontSize: '14px' }
+});
 
 class Job extends React.Component {
     constructor(props) {
         super(props)
-        this.state = { units: this.props.units, unitsToUse: 0, active: this.props.active, unitDesc: '', unitDescs: this.props.unitDesc }
+        this.state = { units: this.props.units, unitsToUse: 0, active: this.props.active, unitDesc: '', unitDescs: this.props.unitDesc, showFile: false }
     }
 
     componentDidUpdate(nextProps) {
@@ -20,7 +26,7 @@ class Job extends React.Component {
                 units: this.props.units,
                 unitsToUse: 0,
                 active: this.props.active,
-                unitDescs:this.props.unitDesc
+                unitDescs: this.props.unitDesc
             });
         }
     }
@@ -84,10 +90,38 @@ class Job extends React.Component {
 
     }
 
+    addZeroToMinutes = (date) => {
+        let minutes = date.getMinutes()
+
+        if (minutes.toString().length === 1) {
+            minutes = "0" + minutes
+        }
+        return minutes
+    }
+
     render() {
+        const MyDoc = () => {
+            return <Document>
+                <Page style={pdfStyle.page}>
+                    <Text style={pdfStyle.headline}>
+                        {this.props.title}
+                    </Text>
+                    <Text style={pdfStyle.paragraph}>
+                        Antal klip brugt: {this.props.initUnits} {"\n"}
+                        Timepris: {this.props.price},- {"\n"}
+                        Samlet værdi: {this.props.initUnits * this.props.price},-{"\n\n"}
+                        {this.state.unitDescs.map((ud, index) => {
+                            let date = ud.timestamp.toDate()
+                            let minutes = this.addZeroToMinutes(date)
+                            return <div key={index}>{ud.unitsUsed} klip brugt d. {date.getDate()}/{date.getMonth() + 1}-{date.getFullYear()} kl. {date.getHours()}:{minutes} - {ud.unitDesc}{"\n"}</div>
+                        })}
+                    </Text>
+                </Page>
+            </Document>
+        }
 
         const unitlessJob =
-            <div>
+            <>
                 <Row>
                     <p style={{ textDecoration: "underline" }}>Dette job er afsluttet.</p>
 
@@ -96,11 +130,20 @@ class Job extends React.Component {
                         <p>Timepris: {this.props.price},-</p>
                         <p>Samlet værdi: {this.props.initUnits * this.props.price},-</p>
                     </Col>
-                    <Row style={{display:"flex",justifyContent:"center"}}>
-                        <Button variant="danger" style={{ width: "100px" }} onClick={this.archive}>Arkiver</Button>
+                    <Row style={{ display: "flex", justifyContent: "center" }}>
+                        <Col>
+                            <Button variant="danger" style={{ width: "100px", marginRight: "20px" }} onClick={this.archive}>Arkiver</Button>
+
+                        </Col>
+                        <Col>
+                            <PDFDownloadLink document={<MyDoc />} fileName={this.props.title + ".pdf"}>
+                                {({ blob, url, loading, error }) => (loading ? <Button>Indlæser ...</Button> : <Button>Download</Button>)}
+                            </PDFDownloadLink>
+                        </Col>
+
                     </Row>
                 </Row>
-            </div>
+            </>
 
         return (
             <div style={{ padding: "20px" }}>
@@ -119,10 +162,10 @@ class Job extends React.Component {
                             </div>
                         </Col>
                         <Col>
-                            <Form.Group style={{marginTop:"50px"}} className="mb-3" controlId="formUnitDesc">
+                            <Form.Group style={{ marginTop: "50px" }} className="mb-3" controlId="formUnitDesc">
                                 <Form.Control style={{ margin: "0 auto", display: "block" }} as="textarea" rows={3} className={styles.unitDescInput} name="unitDesc" value={this.state.unitDesc} onChange={event => this.handleDescChange(event)} type="text" placeholder="Brugsbeskrivelse ..." />
                             </Form.Group>
-                            <Button style={{ margin: "0 auto", display: "block",backgroundColor:"#1796ff" }} onClick={event => this.handleSubmit(event)}>Brug</Button>
+                            <Button style={{ margin: "0 auto", display: "block", backgroundColor: "#1796ff" }} onClick={event => this.handleSubmit(event)}>Brug</Button>
                             <p style={{ textAlign: "center" }}>Værdi: {this.state.unitsToUse * this.props.price} </p>
                         </Col>
                         <Col>
@@ -135,7 +178,7 @@ class Job extends React.Component {
                                     <p style={{ textAlign: "center" }}>Klipværdi: {this.props.price}</p>
 
                                 </Col>
-                                <Col style={{ marginLeft: "-100px",display:"flex", alignItems:"flex-start" ,flexDirection:"column",marginTop:"40px"}}>
+                                <Col style={{ marginLeft: "-100px", display: "flex", alignItems: "flex-start", flexDirection: "column", marginTop: "40px" }}>
                                     <Button className={styles.changeUnitsButton} onClick={() => {
                                         if (this.state.unitsToUse < this.props.units) {
                                             this.setState((prevState, props) => ({
@@ -166,12 +209,8 @@ class Job extends React.Component {
                 <Row>
                     {this.state.unitDescs.map((ud, index) => {
                         let date = ud.timestamp.toDate()
-                        let minutes = date.getMinutes()
-                        console.log(minutes.toString.length)
+                        let minutes = this.addZeroToMinutes(date)
 
-                        if(minutes.toString().length === 1){
-                            minutes = "0" + minutes
-                        }
                         return <div key={index}>{ud.unitsUsed} klip brugt d. {date.getDate()}/{date.getMonth() + 1}-{date.getFullYear()} kl. {date.getHours()}:{minutes} - {ud.unitDesc}</div>
                     })}
                 </Row>

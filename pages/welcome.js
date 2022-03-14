@@ -37,7 +37,6 @@ class Welcome extends React.Component {
     componentDidMount() {
         if (auth.currentUser) {
             this.fetchJobs()
-            console.log("jobs fetched")
         }
     }
     // componentDidUpdate(prevProps, prevState) {
